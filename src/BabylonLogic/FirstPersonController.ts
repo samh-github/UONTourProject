@@ -80,7 +80,7 @@ export class FirstPersonController {
       "",
       "./models/",
       //  "EngineShedtest2.glb"
-      "LearningHub.glb"
+      "LearningHub2.glb"
     );
 
     meshes.map((mesh) => {

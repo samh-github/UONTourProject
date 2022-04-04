@@ -21,9 +21,7 @@ export class FirstPersonController {
   constructor(private canvas: HTMLCanvasElement) {
     this.engine = new Engine(this.canvas, true);
     this.scene = this.CreateScene();
-    //this.CreateGround();
-    //this.CreateBarrel();
-    //this code is stolen off internet to help with 'reversed models' -- this.scene.useRightHandedSystem = true;
+    this.CreateFloor();
     this.CreateEngineShed();
     this.CreateController();
 
@@ -35,11 +33,10 @@ export class FirstPersonController {
   CreateScene(): Scene {
     const scene = new Scene(this.engine);
 
-    // commented code is from custommodels.ts
     // Free camera to add flight for visual bug checking in map
     // const camera = new FreeCamera("camera", new Vector3(0, 5, -15), this.scene);
     // camera.attachControl();
-    // camera.speed = 0.25;
+    // camera.speed = 0.5;
 
     //const envTex = CubeTexture.CreateFromPrefilteredData(
     //  "./enviroment/environment.env",
@@ -51,6 +48,7 @@ export class FirstPersonController {
     //scene.createDefaultSkybox(envTex, true);
     //global brightness for PBR skybox
     //scene.environmentIntensity = 0.75;
+    // Skybox file is too large for 2GB max github repo hosted size. Hemi use instead.
 
     const light = new HemisphericLight(
       "hemi",
@@ -75,12 +73,27 @@ export class FirstPersonController {
     return scene;
   }
 
+  async CreateFloor(): Promise<void> {
+    const { meshes } = await SceneLoader.ImportMeshAsync(
+      "",
+      "./models/",
+      //  "EngineShedtest2.glb"
+      "ScaledJFloors.glb"
+    );
+
+    meshes.map((mesh) => {
+      mesh.checkCollisions = false;
+    });
+
+    // console.log("models", meshes);
+  }
+
   async CreateEngineShed(): Promise<void> {
     const { meshes } = await SceneLoader.ImportMeshAsync(
       "",
       "./models/",
       //  "EngineShedtest2.glb"
-      "LearningHub2.glb"
+      "ScaledJMap.glb"
     );
 
     meshes.map((mesh) => {
@@ -102,8 +115,8 @@ export class FirstPersonController {
     camera.checkCollisions = true;
 
     camera.ellipsoid = new Vector3(1.5, 0.7, 1.5);
-    camera.speed = 0.7;
-    camera.angularSensibility = 5000;
+    camera.speed = 0.5;
+    camera.angularSensibility = 8500;
 
     // keycode.info used to find WASD
     camera.keysUp.push(87);
